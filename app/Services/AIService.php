@@ -20,15 +20,22 @@ class AIService
         );
         $this->chat = new AnthropicChat($config);
 
-        $action = new Parameter('action', 'string', 'either \'on\' or \'off\'');
-        //$state = new Parameter('state', 'string', 'either \'on\' or \'off\'');
-        //$device_name = new Parameter('device_name', 'string', 'place where the light is');
+        //$action = new Parameter('action', 'string', 'either \'on\' or \'off\'');
+        $state = new Parameter('state', 'string', 'either \'on\' or \'off\'');
+        $device_name = new Parameter('device_name', 'string', 'place where the light is');
 
+        /*
         $tool = new FunctionInfo(
             'manageLights',
             new LightsService(),
             'Turn on or off the lights',
             [$action]
+        );
+        */$tool = new FunctionInfo(
+            'manageLightsMCP',
+            new LightsService(new MCPService()),
+            'Turn on or off the lights',
+            [$state, $device_name]
         );
 
         /*
@@ -49,8 +56,10 @@ class AIService
     {
         $result = $this->chat->generateTextOrReturnFunctionCalled($prompt);
 
+        // Since manageLightsMCP now returns a string, result should always be a string
         if (is_array($result)) {
-            return "Lumières contrôlées via MCP ! Détails: " . json_encode($result);
+            // This shouldn't happen anymore, but keep as fallback
+            return "Tool executed with result: " . json_encode($result);
         }
 
         return $result;
