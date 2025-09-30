@@ -24,18 +24,24 @@ class AIService
         $state = new Parameter('state', 'string', 'either \'on\' or \'off\'');
         $device_name = new Parameter('device_name', 'string', 'place where the light is');
 
-        /*
         $tool = new FunctionInfo(
-            'manageLights',
-            new LightsService(),
-            'Turn on or off the lights',
-            [$action]
-        );
-        */$tool = new FunctionInfo(
             'manageLightsMCP',
             new LightsService(new MCPService()),
             'Turn on or off the lights',
             [$state, $device_name]
+        );
+
+
+        $to_email = new Parameter('to_email', 'string', 'The destination mail');
+        $subject = new Parameter('subject', 'string', 'The mail subject');
+        $body = new Parameter('body', 'string', 'The mail body');
+
+
+        $mailTool = new FunctionInfo(
+            'sendMail',
+            new MailerExample(new MCPService()),
+            'Send mail to the specified destination. Beautify the mail style and text to be polite',
+            [$to_email, $subject, $body]
         );
 
         /*
@@ -49,6 +55,7 @@ class AIService
 
 
         $this->chat->addTool($tool);
+        $this->chat->addTool($mailTool);
         $this->chat->setSystemMessage('You are an AI that is able turn on or off lights by using your MCP tools');
     }
 
