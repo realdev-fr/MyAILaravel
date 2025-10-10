@@ -43,8 +43,6 @@ class LightsService
                 'state' => $state,
             ]);
 
-            dd($response);
-
             Log::info("Device management via MCP successful", [
                 'device' => $device_name,
                 'state' => $state,
